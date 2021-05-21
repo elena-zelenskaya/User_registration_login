@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-import re
+import re, bcrypt
 
 # Create your models here.
 class UserManager(models.Manager):
@@ -38,13 +38,12 @@ class UserManager(models.Manager):
             errors["password_confirmation"] = "Password confirmation doesn't match the password"
         return errors
 
-    def login_validator(self, session_data, post_data, emails_list):
-        errors = {}
-        if post_data["email_login"] not in emails_list:
-            errors["non_existing_email"] = "Unknown email"
-        else:
-            session_data["email_login"] = post_data["email_login"]
-        return errors
+    def login_validator(self, email, password):
+        users = self.filter(email=email)
+        if not users:
+            return False
+        user = users[0]
+        return bcrypt.checkpw(password.encode(), user.password.encode())
 
 
 class User(models.Model):

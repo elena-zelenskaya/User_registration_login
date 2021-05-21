@@ -34,12 +34,8 @@ class UserManager(models.Manager):
             session_data["email"] = post_data["email"]
         if len(post_data["password"]) < 8:
             errors["password_length"] = "Password should be at least 8 characters"
-        else:
-            session_data["password"] = post_data["password"]
         if post_data["password"] != post_data["confirm_password"]:
             errors["password_confirmation"] = "Password confirmation doesn't match the password"
-        else:
-            session_data["confirm_password"] = post_data["confirm_password"]
         return errors
 
     def login_validator(self, session_data, post_data, emails_list):
